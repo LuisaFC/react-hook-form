@@ -15,7 +15,12 @@ function App() {
   //register -> input register anda validation
   //formState -> form infos
 
-  const {handleSubmit: hookFormHandleSubmit, register, formState} = useForm<IFormData>()
+  const {
+    handleSubmit: hookFormHandleSubmit,
+    register,
+    formState,
+    clearErrors
+  } = useForm<IFormData>()
 
   const handleSubmit = hookFormHandleSubmit(
     (data) => {
@@ -57,7 +62,7 @@ function App() {
             {...register('age', {
               required: {
                 value: true,
-                message: "O nome é obrigatório"
+                message: "A idade é obrigatória"
               }
             })}
           />
@@ -71,6 +76,16 @@ function App() {
         <Button className="mt-4">
           Enviar
         </Button>
+
+        <div>
+          <Button
+            size="sm"
+            type="button"
+            variant="outline"
+            onClick={() => clearErrors()}>
+              Limpar Erros
+          </Button>
+        </div>
       </form>
     </div>
   );
