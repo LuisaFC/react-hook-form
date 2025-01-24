@@ -11,6 +11,10 @@ interface IFormData {
 function App() {
     console.log("App renderizou")
 
+    //handleSubmit -> submit function
+    //register -> input register anda validation 
+    //formState -> form infos
+
     const {handleSubmit: hookFormHandleSubmit, register, formState} = useForm<IFormData>()
 
     const handleSubmit = hookFormHandleSubmit(
