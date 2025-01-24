@@ -14,13 +14,20 @@ function App() {
   //handleSubmit -> submit function
   //register -> input register anda validation
   //formState -> form infos
+  //formState.isDirty -> detectar alterações nos campos
+  //formState.dirtyFields -> verifica quais campos foram alterados
 
   const {
     handleSubmit: hookFormHandleSubmit,
     register,
     formState,
     clearErrors
-  } = useForm<IFormData>()
+  } = useForm<IFormData>({
+    defaultValues: {
+      name: "",
+      age: 0
+    }
+  })
 
   const handleSubmit = hookFormHandleSubmit(
     (data) => {
@@ -31,6 +38,9 @@ function App() {
       console.log("errors", errors)
     }
 	)
+
+  //verificar se teve campo alterado
+  const isDirty = Object.keys(formState.dirtyFields).length > 0
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center">
@@ -51,7 +61,8 @@ function App() {
           <ErrorMessage
             errors={formState.errors}
             name="name"
-            render={({ message }) => <small className="text-red-400 block">{message}</small>}
+            render={({ message }) =>
+              <small className="text-red-400 block">{message}</small>}
           />
         </div>
 
@@ -63,7 +74,8 @@ function App() {
               required: {
                 value: true,
                 message: "A idade é obrigatória"
-              }
+              },
+              setValueAs: (age) => Number(age)
             })}
           />
           <ErrorMessage
@@ -73,9 +85,19 @@ function App() {
           />
         </div>
 
-        <Button className="mt-4">
-          Enviar
-        </Button>
+        <div className="flex mt-4 gap-2">
+          <Button
+            className="flex-1"
+            disabled={!isDirty}>
+            Salvar
+          </Button>
+
+          <Button
+            className="flex-1"
+            disabled={isDirty}>
+            Enviar
+          </Button>
+        </div>
 
         <div>
           <Button
