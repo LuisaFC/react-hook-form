@@ -52,9 +52,6 @@ function App() {
   //verificar se teve campo alterado
   const isDirty = Object.keys(formState.dirtyFields).length > 0
 
-  //verificar se o formulário está válido(campos preenchidos corretamente)
-  const isValid = formState.isValid
-
   return (
     <div className="min-h-screen flex flex-col items-center justify-center">
       <form
@@ -102,13 +99,13 @@ function App() {
         <div className="flex mt-4 gap-2">
           <Button
             className="flex-1"
-            disabled={!isDirty || isSubmitting || !isValid}>
+            disabled={!isDirty || isSubmitting}>
             Salvar
           </Button>
 
           <Button
             className="flex-1"
-            disabled={isDirty || isSubmitting || !isValid}>
+            disabled={isDirty || isSubmitting}>
             Enviar
           </Button>
         </div>
