@@ -14,14 +14,16 @@ function App() {
   //handleSubmit -> submit function
   //register -> input register anda validation
   //formState -> form infos
-  //formState.isDirty -> detectar alterações nos campos
-  //formState.dirtyFields -> verifica quais campos foram alterados
+  //reset -> redefinir os campos do formulário após a submissão
+  //resetField -> redefinir um campo após a submissão
 
   const {
     handleSubmit: hookFormHandleSubmit,
     register,
     formState,
     clearErrors,
+    reset,
+    resetField
   } = useForm<IFormData>({
     defaultValues: {
       name: "",
@@ -29,10 +31,16 @@ function App() {
     }
   })
 
+
   const handleSubmit = hookFormHandleSubmit(
     (data) => {
       console.log("Esse é o onValid")
       console.log("data", {data: data})
+
+    /*   setando novo valor como default
+      resetField("name", {defaultValue: data.name}) */
+
+      reset()
     },
     (errors) => {
       console.log("errors", errors)
