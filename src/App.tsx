@@ -21,7 +21,7 @@ function App() {
     handleSubmit: hookFormHandleSubmit,
     register,
     formState,
-    clearErrors
+    clearErrors,
   } = useForm<IFormData>({
     defaultValues: {
       name: "",
@@ -38,6 +38,9 @@ function App() {
       console.log("errors", errors)
     }
 	)
+
+  //verificar se o formulário está sendo submetido
+  const isSubmitting =  formState.isSubmitting
 
   //verificar se teve campo alterado
   const isDirty = Object.keys(formState.dirtyFields).length > 0
@@ -88,13 +91,13 @@ function App() {
         <div className="flex mt-4 gap-2">
           <Button
             className="flex-1"
-            disabled={!isDirty}>
+            disabled={!isDirty || isSubmitting}>
             Salvar
           </Button>
 
           <Button
             className="flex-1"
-            disabled={isDirty}>
+            disabled={isDirty || isSubmitting}>
             Enviar
           </Button>
         </div>
