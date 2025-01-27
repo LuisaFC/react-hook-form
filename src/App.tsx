@@ -7,6 +7,8 @@ interface IFormData {
     name: string;
     age: number;
     zipcode: string;
+    street: string;
+    city: string;
 }
 
 function App() {
@@ -24,11 +26,11 @@ function App() {
     formState,
     clearErrors,
     reset,
-    getValues
+    getValues,
+    setValue,
   } = useForm<IFormData>({
     defaultValues: {
       name: "",
-      age: 0
     }
   })
 
@@ -54,9 +56,15 @@ function App() {
   //verificar se teve campo alterado
   const isDirty = Object.keys(formState.dirtyFields).length > 0
 
-  function handleSearchZipcode() {
-    const zipCode = getValues("zipcode")
-    console.log("Buscando CEP: ", zipCode)
+  async function handleSearchZipcode() {
+    const zipcode = getValues("zipcode")
+
+    const response = await fetch(`https://viacep.com.br/ws/${zipcode}/json/`)
+
+    const body = await response.json();
+
+    setValue("city", body.localidade)
+    setValue("street", body.logradouro)
   }
 
   return (
@@ -120,6 +128,15 @@ function App() {
             Buscar
           </Button>
         </div>
+
+        <Input
+          placeholder="Cidade"
+          {...register('city')}
+        />
+        <Input
+          placeholder="Rua"
+          {...register('street')}
+        />
 
         <div className="flex mt-4 gap-2">
           <Button
