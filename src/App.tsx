@@ -6,6 +6,7 @@ import { Button } from "./components/ui/button";
 interface IFormData {
     name: string;
     age: number;
+    zipcode: string;
 }
 
 function App() {
@@ -23,16 +24,13 @@ function App() {
     formState,
     clearErrors,
     reset,
-    watch,
+    getValues
   } = useForm<IFormData>({
     defaultValues: {
       name: "",
       age: 0
     }
   })
-
-  //Observable
-  const watchedAge = watch("age")
 
 
   const handleSubmit = hookFormHandleSubmit(
@@ -56,10 +54,13 @@ function App() {
   //verificar se teve campo alterado
   const isDirty = Object.keys(formState.dirtyFields).length > 0
 
+  function handleSearchZipcode() {
+    const zipCode = getValues("zipcode")
+    console.log("Buscando CEP: ", zipCode)
+  }
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center">
-
-      <h1>Idade: {watchedAge}</h1>
 
       <form
           onSubmit={handleSubmit}
@@ -101,6 +102,23 @@ function App() {
             name="age"
             render={({ message }) => <small className="text-red-400 block">{message}</small>}
           />
+        </div>
+
+        <div className="flex gap-2">
+          <Input
+          className="flex-1"
+            type="number"
+            placeholder="CEP"
+            {...register('zipcode')}
+          />
+
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={handleSearchZipcode}
+          >
+            Buscar
+          </Button>
         </div>
 
         <div className="flex mt-4 gap-2">
