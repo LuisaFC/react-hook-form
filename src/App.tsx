@@ -23,12 +23,16 @@ function App() {
     formState,
     clearErrors,
     reset,
+    watch,
   } = useForm<IFormData>({
     defaultValues: {
       name: "",
       age: 0
     }
   })
+
+  //Observable
+  const watchedAge = watch("age")
 
 
   const handleSubmit = hookFormHandleSubmit(
@@ -54,6 +58,9 @@ function App() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center">
+
+      <h1>Idade: {watchedAge}</h1>
+
       <form
           onSubmit={handleSubmit}
           className="flex flex-col gap-2 w-96"
