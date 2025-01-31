@@ -3,6 +3,7 @@ import { Input } from "./components/ui/input"
 import { ErrorMessage } from '@hookform/error-message';
 import { Button } from "./components/ui/button";
 import { useEffect } from "react";
+import { sleep } from "./lib/utils";
 
 interface IFormData {
     name: string;
@@ -33,10 +34,18 @@ function App() {
     reset,
     setValue,
     watch,
-    setError
+    setError,
   } = useForm<IFormData>({
-    defaultValues: {
-      name: "",
+    defaultValues: async () => {
+      await sleep()
+
+      return{
+        name: "Luisa",
+        age: 25,
+        zipcode: "15377654",
+        street: "Rua 1",
+        city: "Cidade 2",
+      }
     }
   })
 
