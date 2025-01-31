@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form"
 import { Input } from "./components/ui/input"
 import { ErrorMessage } from '@hookform/error-message';
 import { Button } from "./components/ui/button";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 
 interface IFormData {
     name: string;
@@ -29,7 +29,6 @@ function App() {
     formState,
     clearErrors,
     reset,
-    getValues,
     setValue,
     watch,
   } = useForm<IFormData>({
@@ -38,19 +37,16 @@ function App() {
     }
   })
 
-  const lastSearchedZipCode = useRef(getValues("zipcode"))
-
   //Monitorando as alterações do form sem renderizar o componente a cada modificação
   useEffect(() => {
-    const {unsubscribe} = watch(async (formData) => {
+    const {unsubscribe} = watch(async (formData, {name}) => {
       const zipcode = formData.zipcode ?? ''
 
-      if(zipcode.length >= 8 && zipcode !== lastSearchedZipCode.current){
+      if(name === 'zipcode' && zipcode.length >= 8){
         const response = await fetch(`https://viacep.com.br/ws/${zipcode}/json/`)
 
         const body = await response.json();
 
-        lastSearchedZipCode.current = zipcode
         setValue("city", body.localidade)
         setValue("street", body.logradouro)
       }
