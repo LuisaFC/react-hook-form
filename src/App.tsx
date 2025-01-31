@@ -101,6 +101,10 @@ function App() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center">
 
+      {formState.isLoading && (
+        <h1>Carregando...</h1>
+      )}
+
       <form
           onSubmit={handleSubmit}
           className="flex flex-col gap-2 w-96"
