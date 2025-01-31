@@ -23,6 +23,7 @@ function App() {
   //getValues -> obter os valores de todos os campos do form ou de um campo específico.
   //setValue -> modificar o valor de um input
   //watch -> monitorar as mudanças de um campo específico
+  //setError -> setar um erro no campo
 
   const {
     handleSubmit: hookFormHandleSubmit,
@@ -32,6 +33,7 @@ function App() {
     reset,
     setValue,
     watch,
+    setError
   } = useForm<IFormData>({
     defaultValues: {
       name: "",
@@ -47,6 +49,13 @@ function App() {
         const response = await fetch(`https://viacep.com.br/ws/${zipcode}/json/`)
 
         const body = await response.json();
+
+        if(body.erro){
+          setError('zipcode', {
+            type: 'valdiate',
+            message: 'CEP informado é invalido'
+          })
+        }
 
         setValue("city", body.localidade)
         setValue("street", body.logradouro)
@@ -125,12 +134,19 @@ function App() {
           />
         </div>
 
-        <div className="flex gap-2">
+        <div>
           <Input
           className="flex-1"
             type="number"
             placeholder="CEP"
             {...register('zipcode')}
+          />
+
+          <ErrorMessage
+            errors={formState.errors}
+            name="zipcode"
+            render={({ message }) =>
+              <small className="text-red-400 block">{message}</small>}
           />
         </div>
 
