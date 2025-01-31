@@ -2,6 +2,7 @@ import { useForm } from "react-hook-form"
 import { Input } from "./components/ui/input"
 import { ErrorMessage } from '@hookform/error-message';
 import { Button } from "./components/ui/button";
+import { useEffect, useRef } from "react";
 
 interface IFormData {
     name: string;
@@ -19,6 +20,8 @@ function App() {
   //formState -> form infos
   //reset -> redefinir os campos do formulário após a submissão
   //resetField -> redefinir um campo após a submissão
+  //getValues -> obter os valores de todos os campos do form ou de um campo específico.
+  //setValue -> modificar o valor de um input
 
   const {
     handleSubmit: hookFormHandleSubmit,
@@ -28,11 +31,35 @@ function App() {
     reset,
     getValues,
     setValue,
+    watch,
   } = useForm<IFormData>({
     defaultValues: {
       name: "",
     }
   })
+
+  const lastSearchedZipCode = useRef(getValues("zipcode"))
+
+  //Monitorando as alterações do form sem renderizar o componente a cada modificação
+  useEffect(() => {
+    const {unsubscribe} = watch(async (formData) => {
+      const zipcode = formData.zipcode ?? ''
+
+      if(zipcode.length >= 8 && zipcode !== lastSearchedZipCode.current){
+        const response = await fetch(`https://viacep.com.br/ws/${zipcode}/json/`)
+
+        const body = await response.json();
+
+        lastSearchedZipCode.current = zipcode
+        setValue("city", body.localidade)
+        setValue("street", body.logradouro)
+      }
+    })
+
+    return () => {
+      unsubscribe()
+    }
+  },[watch, setValue])
 
 
   const handleSubmit = hookFormHandleSubmit(
@@ -55,17 +82,6 @@ function App() {
 
   //verificar se teve campo alterado
   const isDirty = Object.keys(formState.dirtyFields).length > 0
-
-  async function handleSearchZipcode() {
-    const zipcode = getValues("zipcode")
-
-    const response = await fetch(`https://viacep.com.br/ws/${zipcode}/json/`)
-
-    const body = await response.json();
-
-    setValue("city", body.localidade)
-    setValue("street", body.logradouro)
-  }
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center">
@@ -119,14 +135,6 @@ function App() {
             placeholder="CEP"
             {...register('zipcode')}
           />
-
-          <Button
-            type="button"
-            variant="ghost"
-            onClick={handleSearchZipcode}
-          >
-            Buscar
-          </Button>
         </div>
 
         <Input
