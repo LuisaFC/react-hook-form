@@ -22,6 +22,7 @@ function App() {
   //resetField -> redefinir um campo após a submissão
   //getValues -> obter os valores de todos os campos do form ou de um campo específico.
   //setValue -> modificar o valor de um input
+  //watch -> monitorar as mudanças de um campo específico
 
   const {
     handleSubmit: hookFormHandleSubmit,
