@@ -3,19 +3,13 @@ import { useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { Button } from "./components/ui/button"
 import { Input } from "./components/ui/input"
-import { sleep } from "./lib/utils"
 import { IFormData } from "./types"
 
-export function Form() {
-  //handleSubmit -> submit function
-  //register -> input register anda validation
-  //formState -> form infos
-  //reset -> redefinir os campos do formulário após a submissão
-  //resetField -> redefinir um campo após a submissão
-  //getValues -> obter os valores de todos os campos do form ou de um campo específico.
-  //setValue -> modificar o valor de um input
-  //watch -> monitorar as mudanças de um campo específico
-  //setError -> setar um erro no campo
+interface IFormProps {
+  user: IFormData
+}
+
+export function Form({ user }: IFormProps) {
 
   const {
     handleSubmit: hookFormHandleSubmit,
@@ -27,17 +21,7 @@ export function Form() {
     watch,
     setError,
   } = useForm<IFormData>({
-    defaultValues: async () => {
-      await sleep()
-
-      return{
-        name: "Luisa",
-        age: 25,
-        zipcode: "15377654",
-        street: "Rua 1",
-        city: "Cidade 2",
-      }
-    }
+    values: user
   })
 
   //Monitorando as alterações do form sem renderizar o componente a cada modificação
