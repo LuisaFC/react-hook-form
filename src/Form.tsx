@@ -21,7 +21,10 @@ export function Form({ user }: IFormProps) {
     watch,
     setError,
   } = useForm<IFormData>({
-    values: user
+    values: user,
+    resetOptions: {
+      keepDirtyValues: true,
+    }
   })
 
   //Monitorando as alterações do form sem renderizar o componente a cada modificação
@@ -60,7 +63,7 @@ export function Form({ user }: IFormProps) {
     /*   setando novo valor como default
       resetField("name", {defaultValue: data.name}) */
 
-      reset()
+      reset(data)
     },
     (errors) => {
       console.log("errors", errors)
