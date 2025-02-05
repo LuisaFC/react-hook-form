@@ -27,6 +27,7 @@ export function Form({ user }: IFormProps) {
     },
     mode: 'onSubmit',
     reValidateMode: 'onBlur',
+    shouldFocusError: false,
   })
 
   //Monitorando as alterações do form sem renderizar o componente a cada modificação
