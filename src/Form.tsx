@@ -24,7 +24,8 @@ export function Form({ user }: IFormProps) {
     values: user,
     resetOptions: {
       keepDirtyValues: true,
-    }
+    },
+    disabled: true, //disabled by default all inputs
   })
 
   //Monitorando as alterações do form sem renderizar o componente a cada modificação
