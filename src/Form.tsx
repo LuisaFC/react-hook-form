@@ -1,6 +1,6 @@
 import { ErrorMessage } from "@hookform/error-message"
 import { useEffect } from "react"
-import { useForm } from "react-hook-form"
+import { FieldErrors, useForm } from "react-hook-form"
 import { Button } from "./components/ui/button"
 import { Input } from "./components/ui/input"
 import { IFormData } from "./types"
@@ -26,8 +26,24 @@ export function Form({ user }: IFormProps) {
       keepDirtyValues: true,
     },
     mode: 'onSubmit',
-    reValidateMode: 'onBlur',
+    reValidateMode: 'onChange',
     shouldFocusError: false,
+    resolver: async (values) =>{
+
+      const errors: FieldErrors<IFormData> = {}
+
+      if(values.age < 18){
+        errors.age = {
+          type: 'min',
+          message: 'Sua idade precisa ser maior que 18'
+        }
+      }
+
+      return {
+        values, //o que será recebido dentro do data do handleSubmit
+        errors,
+      }
+    }
   })
 
   //Monitorando as alterações do form sem renderizar o componente a cada modificação
@@ -61,10 +77,11 @@ export function Form({ user }: IFormProps) {
   const handleSubmit = hookFormHandleSubmit(
     (data) => {
       console.log("Esse é o onValid")
-      console.log("data", {data: data})
 
     /*   setando novo valor como default
       resetField("name", {defaultValue: data.name}) */
+
+      console.log("data", data)
 
       reset(data)
     },
@@ -116,9 +133,7 @@ export function Form({ user }: IFormProps) {
               required: {
                 value: true,
                 message: "A idade é obrigatória"
-              },
-              min: 18,
-              setValueAs: (age) => Number(age)
+              }
             })}
           />
           <ErrorMessage
