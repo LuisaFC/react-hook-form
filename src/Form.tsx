@@ -1,9 +1,22 @@
 import { ErrorMessage } from "@hookform/error-message"
 import { useEffect } from "react"
-import { FieldErrors, useForm } from "react-hook-form"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
 import { Button } from "./components/ui/button"
 import { Input } from "./components/ui/input"
 import { IFormData } from "./types"
+import { z } from "zod"
+
+
+const schema = z.object({
+  name: z.string().min(1, 'Nome é obrigatório'),
+  age: z.number().optional(),
+  zipcode: z.string(),
+  city: z.string().optional(),
+  street: z.string().optional(),
+})
+
+type FormData = z.infer<typeof schema>;
 
 interface IFormProps {
   user: IFormData
@@ -20,7 +33,7 @@ export function Form({ user }: IFormProps) {
     setValue,
     watch,
     setError,
-  } = useForm<IFormData>({
+  } = useForm<FormData>({
     values: user,
     resetOptions: {
       keepDirtyValues: true,
@@ -28,22 +41,7 @@ export function Form({ user }: IFormProps) {
     mode: 'onSubmit',
     reValidateMode: 'onChange',
     shouldFocusError: false,
-    resolver: async (values) =>{
-
-      const errors: FieldErrors<IFormData> = {}
-
-      if(values.age < 18){
-        errors.age = {
-          type: 'min',
-          message: 'Sua idade precisa ser maior que 18'
-        }
-      }
-
-      return {
-        values, //o que será recebido dentro do data do handleSubmit
-        errors,
-      }
-    }
+    resolver: zodResolver(schema),
   })
 
   //Monitorando as alterações do form sem renderizar o componente a cada modificação
@@ -110,12 +108,7 @@ export function Form({ user }: IFormProps) {
         <div>
           <Input
             placeholder="Nome"
-            {...register('name',{
-              required: {
-                value: true,
-                message: "O nome é obrigatório"
-              }
-            })}
+            {...register('name')}
           />
           <ErrorMessage
             errors={formState.errors}
@@ -129,12 +122,7 @@ export function Form({ user }: IFormProps) {
           <Input
             type="number"
             placeholder="Idade"
-            {...register('age', {
-              required: {
-                value: true,
-                message: "A idade é obrigatória"
-              }
-            })}
+            {...register('age')}
           />
           <ErrorMessage
             errors={formState.errors}
