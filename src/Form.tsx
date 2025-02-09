@@ -1,11 +1,12 @@
 import { ErrorMessage } from "@hookform/error-message"
 import { useEffect } from "react"
-import { useForm } from "react-hook-form"
+import { Controller, useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Button } from "./components/ui/button"
 import { Input } from "./components/ui/input"
 import { IFormData } from "./types"
 import { z } from "zod"
+import { Switch } from "./components/ui/switch"
 
 
 const schema = z.object({
@@ -14,6 +15,7 @@ const schema = z.object({
   zipcode: z.string(),
   city: z.string().optional(),
   street: z.string().optional(),
+  blocked: z.boolean().optional()
 })
 
 type FormData = z.infer<typeof schema>;
@@ -33,6 +35,7 @@ export function Form({ user }: IFormProps) {
     setValue,
     watch,
     setError,
+    control
   } = useForm<FormData>({
     values: user,
     resetOptions: {
@@ -105,6 +108,25 @@ export function Form({ user }: IFormProps) {
           onSubmit={handleSubmit}
           className="flex flex-col gap-2 w-96"
       >
+
+        <div>
+          <Controller
+            control={control}
+            name="blocked"
+            render={({field}) => (
+              <Switch
+               /*  ref={field.ref}
+                name={field.name}
+                onBlur={field.onBlur} */
+                onCheckedChange={field.onChange}
+                checked={field.value}
+                //disabled={field.disabled}
+              />
+            )}
+          />
+
+        </div>
+
         <div>
           <Input
             placeholder="Nome"
