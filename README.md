@@ -10,6 +10,7 @@ This project demonstrates a seamless integration of **React Hook Form** with Sha
 * React Hook Form
 * Zod
 * Shadcn
+* API ViaCEP
 
 **Project Structure**
 * **components**: Reusable form components
