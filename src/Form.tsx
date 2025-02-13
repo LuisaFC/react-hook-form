@@ -1,12 +1,12 @@
 import { ErrorMessage } from "@hookform/error-message"
 import { useEffect } from "react"
-import { Controller, useForm } from "react-hook-form"
+import { FormProvider, useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Button } from "./components/ui/button"
 import { Input } from "./components/ui/input"
 import { IFormData } from "./types"
 import { z } from "zod"
-import { Switch } from "./components/ui/switch"
+import { ControlledSwitch } from "./components/ControlledSwitch"
 
 
 const schema = z.object({
@@ -26,6 +26,17 @@ interface IFormProps {
 
 export function Form({ user }: IFormProps) {
 
+  const form = useForm<FormData>({
+    values: user,
+    resetOptions: {
+      keepDirtyValues: true,
+    },
+    mode: 'onSubmit',
+    reValidateMode: 'onChange',
+    shouldFocusError: false,
+    resolver: zodResolver(schema),
+  })
+
   const {
     handleSubmit: hookFormHandleSubmit,
     register,
@@ -36,16 +47,8 @@ export function Form({ user }: IFormProps) {
     watch,
     setError,
     control
-  } = useForm<FormData>({
-    values: user,
-    resetOptions: {
-      keepDirtyValues: true,
-    },
-    mode: 'onSubmit',
-    reValidateMode: 'onChange',
-    shouldFocusError: false,
-    resolver: zodResolver(schema),
-  })
+  } = form
+
 
   //Monitorando as alterações do form sem renderizar o componente a cada modificação
   useEffect(() => {
@@ -98,110 +101,98 @@ export function Form({ user }: IFormProps) {
   const isDirty = Object.keys(formState.dirtyFields).length > 0
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center">
+    <FormProvider {...form}>
+      <div className="min-h-screen flex flex-col items-center justify-center">
 
-      {formState.isLoading && (
-        <h1>Carregando...</h1>
-      )}
+          {formState.isLoading && (
+            <h1>Carregando...</h1>
+          )}
 
-      <form
-          onSubmit={handleSubmit}
-          className="flex flex-col gap-2 w-96"
-      >
+          <form
+              onSubmit={handleSubmit}
+              className="flex flex-col gap-2 w-96"
+          >
 
-        <div>
-          <Controller
-            control={control}
-            name="blocked"
-            render={({field}) => (
-              <Switch
-               /*  ref={field.ref}
-                name={field.name}
-                onBlur={field.onBlur} */
-                onCheckedChange={field.onChange}
-                checked={field.value}
-                //disabled={field.disabled}
+            <div>
+              <ControlledSwitch control={control} name="blocked"/>
+            </div>
+
+            <div>
+              <Input
+                placeholder="Nome"
+                {...register('name')}
               />
-            )}
-          />
+              <ErrorMessage
+                errors={formState.errors}
+                name="name"
+                render={({ message }) =>
+                  <small className="text-red-400 block">{message}</small>}
+              />
+            </div>
 
-        </div>
+            <div>
+              <Input
+                type="number"
+                placeholder="Idade"
+                {...register('age')}
+              />
+              <ErrorMessage
+                errors={formState.errors}
+                name="age"
+                render={({ message }) => <small className="text-red-400 block">{message}</small>}
+              />
+            </div>
 
-        <div>
-          <Input
-            placeholder="Nome"
-            {...register('name')}
-          />
-          <ErrorMessage
-            errors={formState.errors}
-            name="name"
-            render={({ message }) =>
-              <small className="text-red-400 block">{message}</small>}
-          />
-        </div>
+            <div>
+              <Input
+              className="flex-1"
+                type="number"
+                placeholder="CEP"
+                {...register('zipcode')}
+              />
 
-        <div>
-          <Input
-            type="number"
-            placeholder="Idade"
-            {...register('age')}
-          />
-          <ErrorMessage
-            errors={formState.errors}
-            name="age"
-            render={({ message }) => <small className="text-red-400 block">{message}</small>}
-          />
-        </div>
+              <ErrorMessage
+                errors={formState.errors}
+                name="zipcode"
+                render={({ message }) =>
+                  <small className="text-red-400 block">{message}</small>}
+              />
+            </div>
 
-        <div>
-          <Input
-          className="flex-1"
-            type="number"
-            placeholder="CEP"
-            {...register('zipcode')}
-          />
+            <Input
+              placeholder="Cidade"
+              {...register('city')}
+            />
+            <Input
+              placeholder="Rua"
+              {...register('street')}
+            />
 
-          <ErrorMessage
-            errors={formState.errors}
-            name="zipcode"
-            render={({ message }) =>
-              <small className="text-red-400 block">{message}</small>}
-          />
-        </div>
+            <div className="flex mt-4 gap-2">
+              <Button
+                className="flex-1"
+                disabled={!isDirty || isSubmitting}>
+                Salvar
+              </Button>
 
-        <Input
-          placeholder="Cidade"
-          {...register('city')}
-        />
-        <Input
-          placeholder="Rua"
-          {...register('street')}
-        />
+              <Button
+                className="flex-1"
+                disabled={isDirty || isSubmitting}>
+                Enviar
+              </Button>
+            </div>
 
-        <div className="flex mt-4 gap-2">
-          <Button
-            className="flex-1"
-            disabled={!isDirty || isSubmitting}>
-            Salvar
-          </Button>
-
-          <Button
-            className="flex-1"
-            disabled={isDirty || isSubmitting}>
-            Enviar
-          </Button>
-        </div>
-
-        <div>
-          <Button
-            size="sm"
-            type="button"
-            variant="outline"
-            onClick={() => clearErrors()}>
-              Limpar Erros
-          </Button>
-        </div>
-      </form>
-    </div>
+            <div>
+              <Button
+                size="sm"
+                type="button"
+                variant="outline"
+                onClick={() => clearErrors()}>
+                  Limpar Erros
+              </Button>
+            </div>
+          </form>
+      </div>
+    </FormProvider>
   );
 }
